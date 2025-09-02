@@ -1,0 +1,7 @@
+{
+  "title": "Demo Course: Learning, Calmly",
+  "description": "A single-lesson demo that shows the player, practice, narration, and AI coach.",
+  "lessons": [
+    { "id": "l1", "title": "One‑Screen Learning with an AI Coach", "file": "lesson-1.md" }
+  ]
+}
