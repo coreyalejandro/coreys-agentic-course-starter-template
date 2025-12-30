@@ -17,15 +17,27 @@ export default function CoachDrawer({ context }: { context: string }) {
 
   async function ask() {
     const q = input.trim(); if (!q) return
+    if (!context || context.trim().length === 0) {
+      setMessages(m => [...m, { role: 'coach', content: 'Error: No lesson content available. Please refresh the page.' }])
+      return
+    }
     setMessages(m => [...m, { role: 'user', content: q }])
     setInput('')
-    const res = await fetch('/api/coach', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: q, context: context.slice(0, 6000) })
-    })
-    const data = await res.json()
-    setMessages(m => [...m, { role: 'coach', content: data.answer || 'No answer' }])
+    try {
+      const res = await fetch('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q, context: context.slice(0, 6000) })
+      })
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Request failed' }))
+        throw new Error(errorData.error || 'Failed to get answer')
+      }
+      const data = await res.json()
+      setMessages(m => [...m, { role: 'coach', content: data.answer || 'No answer received' }])
+    } catch (e: any) {
+      setMessages(m => [...m, { role: 'coach', content: `Error: ${e?.message || 'Failed to connect to coach'}` }])
+    }
   }
 
   return (

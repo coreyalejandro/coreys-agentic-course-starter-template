@@ -11,14 +11,28 @@ export default function ImportPage({ searchParams }: { searchParams: { src?: str
   const [error, setError] = useState<string>('')
 
   async function importMarkdown() {
+    if (!url || !url.trim()) {
+      setError('Please enter a URL')
+      setStatus('error')
+      return
+    }
     setStatus('loading'); setError('')
     try {
       const res = await fetch('/api/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url: url.trim() })
       })
-      if (!res.ok) throw new Error(await res.text())
+      if (!res.ok) {
+        let errorMessage = 'Import failed'
+        try {
+          const errorData = await res.json()
+          errorMessage = errorData.error || errorMessage
+        } catch {
+          errorMessage = await res.text() || errorMessage
+        }
+        throw new Error(errorMessage)
+      }
       const data = await res.json()
       setSlug(data.slug)
       setStatus('done')

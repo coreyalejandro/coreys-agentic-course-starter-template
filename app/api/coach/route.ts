@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     model: 'gpt-4o-mini',
     temperature: 0.2,
     messages: [
-      { role: 'system', content: "You are a calm, accessible learning coach. Answer ONLY using the provided lesson context. Quote the exact lines you used. If it's not in context, say you don't see it."},
+      { role: 'system', content: "You are a calm, accessible learning coach. Answer questions using ONLY the provided lesson context. When you find relevant information, quote the exact text you're using. If the question asks about something not explicitly in the context, acknowledge what IS in the context that might be related, or say you don't see that specific information. Always be helpful and reference the lesson content when possible."},
       { role: 'user', content: `Lesson Context:\n\n${context}\n\nQuestion: ${question}` }
     ]
   })
